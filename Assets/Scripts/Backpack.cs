@@ -7,8 +7,15 @@ public class Backpack : MonoBehaviour
 {
     [SerializeField] private Stack<BlockWheat> towerOfWeatBlocks = new Stack<BlockWheat>();
     [SerializeField] private UIController uIController;
+    [SerializeField] private BlockWheat prefab;
 
     private Coroutine _delaySellCoroutine;
+ 
+    private void Start()
+    {
+        GetSaveBlocks(SaveManager.Singleton.GetBlocksCount());
+        Debug.Log(SaveManager.Singleton.GetBlocksCount());
+    }
 
     public void AddBlockToBackpack(BlockWheat wheat)
     {
@@ -38,5 +45,18 @@ public class Backpack : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
         _delaySellCoroutine = null;
+    }
+
+    private void GetSaveBlocks(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+          Instantiate(prefab, transform.position, Quaternion.identity).AddTouchBlockToBackpack(this);
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveManager.Singleton.SetBlocks(towerOfWeatBlocks.Count);
     }
 }
